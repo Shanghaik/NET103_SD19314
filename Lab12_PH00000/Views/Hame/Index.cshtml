@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h4>@TempData["message"]</h4> @* Lấy dữ liệu trực tiếp từ tempData*@
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h2>Tôi sẽ đặt điểm 10 môn NET103</h2>
+    <div>
+    <button onclick="location.href='@Url.Action("Login", "Account")'" class="btn btn-primary">Login</button>
+    <button onclick="location.href='@Url.Action("SignUp", "Account")'" class="btn btn-secondary">Sign Up</button>
+</div>
+</div>
