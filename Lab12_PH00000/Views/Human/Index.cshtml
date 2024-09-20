@@ -1,0 +1,22 @@
+﻿@using Lab12_PH00000.Models.TestModels;
+@model Lab12_PH00000.Models.TestModels.Human;
+@* @model - strong type mang ý nghĩa khai báo con @Model là gọi ra model mình cần thôi*@
+@{
+    Animal animal = ViewData["animal"] as Animal; // Đọc dữ liệu dạng tường minh
+}
+
+<h1>@Model.Ten</h1>
+<h1>@Model.CCCD</h1>
+<h1>@Model.Tuoi</h1>
+<h1>@Model.SDT</h1>
+@*Trước 1 đoạn code chúng ta sử dụng @*@
+@if (@Model.Luong > 100000000)
+{
+    <h2>Đại gia thật sự với lương @Model.Luong</h2>
+}else
+{
+    <h2>Đại gia fake</h2>
+}
+<h3>Đoạn dưới là dùng ViewData</h3>
+<h2>@animal.Ten có số chân là: @animal.SoChan</h2>
+
