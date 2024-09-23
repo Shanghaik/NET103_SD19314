@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="container">
+        <h2>Đăng nhập vào tài khoản của bạn</h2>
+        <form action="/AccountReal/Login" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            <div class="form-group">
+                <a href="/Account/SignUp">Đăng kí tài khoản mới vì chưa có</a>
+                <a href="/Account/ForgotPassword">Quên mật khẩu</a>
+            </div>
+            <div class="form-group">
+                <a href="/Student/GoHome">Về nhà</a>
+            </div>
+        </form>
+    </div>
+</body>
+@ViewData["account"]
+</html>
