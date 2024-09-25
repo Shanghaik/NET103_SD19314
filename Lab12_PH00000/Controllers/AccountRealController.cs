@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lab12_PH00000.Models.DbModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
 namespace Lab12_PH00000.Controllers
@@ -58,6 +59,62 @@ namespace Lab12_PH00000.Controllers
                 }
                 return View();
             }
+
+
+
+        }
+        public IActionResult Login2(string username, string password) // Login có check đúng username sai password
+        {
+            if (username == null || password == null)
+            {
+                return View();
+            }
+            else
+            {
+                string query = $"select * from account where username !='{username}' ";
+                string connectionString = @"Data Source=SHANGHAIK;Initial Catalog=SD19314;Integrated Security=True;TrustServerCertificate=True";
+                SqlConnection sqlConnection = new SqlConnection(connectionString); // Tạo 1 sqlConnectio dựa theo connectionstring vừa tạo
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection); // Tạo 1 command để thực hiện chạy câu lệnh
+                                                                              // Thực hiện truy vấn
+                try
+                {
+                    List<Account> list = new List<Account>(); // Tạo 1 List để chứa dữ liệu
+                    // Mở connect 
+                    sqlConnection.Open();
+                    SqlDataReader reader = sqlCommand.ExecuteReader();  // truy vấn lấy ra full danh sách các account có username được nhập
+                    while (reader.Read()) // Đọc từng row
+                    {
+                        Account ac = new Account()
+                        {
+                            Username = reader.GetString(0), // 0 tương ứng với cột đầu tiên
+                            Password = reader.GetString(1),
+                            Role = reader.GetInt32(2)
+                        };
+                        list.Add(ac);
+                    }
+                    // Kiểm tra xem trong list đó có password nào như pass mình nhập hay ko?
+                    bool passwordExists = list.Any(a => a.Password == password); // LinQ với Lambda Expression
+                    if(passwordExists)
+                    {
+                        return RedirectToAction("Index", "Hame");
+                    }else
+                    {
+                        ViewData["account"] = "Bạn đã nhập sai mật khẩu rồi nhé";
+                        return View();
+                    }
+                }
+                catch (Exception e)
+                {
+                    return Content("Lỗi rồi cụ ơi" + e.Message);
+                }
+                finally
+                { // Câu lệnh trong finnaly luôn luôn được chạy mặc cho truy vấn có thành công hay ko
+                    sqlConnection.Close();
+                }
+                return View();
+            }
+
+
 
         }
     }
