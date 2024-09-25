@@ -28,7 +28,7 @@ namespace Lab12_PH00000
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Hame}/{action=Privacy}/{id?}");
+                pattern: "{controller=AccountReal}/{action=SignUp}");
 
             app.Run();
         }

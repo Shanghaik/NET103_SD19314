@@ -40,10 +40,10 @@ namespace Lab12_PH00000.Controllers
                     // Mở connect 
                     sqlConnection.Open();
                     var row = sqlCommand.ExecuteScalar();
-     
+
                     if (row != null)
                     {
-                        ViewData["account"] = username; 
+                        ViewData["account"] = username;
                         TempData["account"] = username;
                         return RedirectToAction("Index", "Hame");
                     }
@@ -60,8 +60,6 @@ namespace Lab12_PH00000.Controllers
                 return View();
             }
 
-
-
         }
         public IActionResult Login2(string username, string password) // Login có check đúng username sai password
         {
@@ -71,7 +69,7 @@ namespace Lab12_PH00000.Controllers
             }
             else
             {
-                string query = $"select * from account where username !='{username}' ";
+                string query = $"select * from account where username ='{username}' ";
                 string connectionString = @"Data Source=SHANGHAIK;Initial Catalog=SD19314;Integrated Security=True;TrustServerCertificate=True";
                 SqlConnection sqlConnection = new SqlConnection(connectionString); // Tạo 1 sqlConnectio dựa theo connectionstring vừa tạo
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection); // Tạo 1 command để thực hiện chạy câu lệnh
@@ -94,10 +92,11 @@ namespace Lab12_PH00000.Controllers
                     }
                     // Kiểm tra xem trong list đó có password nào như pass mình nhập hay ko?
                     bool passwordExists = list.Any(a => a.Password == password); // LinQ với Lambda Expression
-                    if(passwordExists)
+                    if (passwordExists)
                     {
                         return RedirectToAction("Index", "Hame");
-                    }else
+                    }
+                    else
                     {
                         ViewData["account"] = "Bạn đã nhập sai mật khẩu rồi nhé";
                         return View();
@@ -113,9 +112,47 @@ namespace Lab12_PH00000.Controllers
                 }
                 return View();
             }
-
-
-
+        }
+        public IActionResult SignUp() // Action này để mở view điền dữ liệu
+        {
+            Account ac = new Account()
+            {
+                Username = "example",
+                Password = "example",
+                Role = 1
+            };
+            return View(ac); // truyền cả đối tượng vào View => Yêu cầu View phải sử dụng @model
+            // vì khi chúng ta truyền 1 object vào phương thức View() thì object đó phải thuộc 1 loại model
+        }
+        [HttpPost]
+        public IActionResult SignUp(string username, string password, int role) // Thực hiện việc tạo mới
+        {
+            string query = $"insert into account values ('{username}', '{password}', {role})";
+            string connectionString = @"Data Source=SHANGHAIK;Initial Catalog=SD19314;Integrated Security=True;TrustServerCertificate=True";
+            SqlConnection sqlConnection = new SqlConnection(connectionString); // Tạo 1 sqlConnectio dựa theo connectionstring vừa tạo
+            SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+            try
+            {
+                sqlConnection.Open();
+                int success = sqlCommand.ExecuteNonQuery(); //Khi create - chúng ta có tác động lên các row - 1 dòng
+                if(success != 1)
+                {
+                    ViewData["message"] = "Tạo mới tài khoản thất bại";
+                    return View();
+                     
+                }else
+                {
+                    return RedirectToAction("Login2", "AccountReal"); // Thành công thì chuyển hướng
+                }
+            }
+            catch (Exception e)
+            {
+                return Content(e.Message);
+            }
+            finally { 
+                sqlConnection.Close(); 
+            }
+            return View();
         }
     }
 }

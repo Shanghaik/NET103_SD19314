@@ -1,0 +1,27 @@
+﻿@model Lab12_PH00000.Models.DbModels.Account;
+
+<h2>Create Account</h2>
+
+@using (Html.BeginForm()) @*TagHelper là công nghệ cho phép chúng ta tự gen ra các thẻ html*@ 
+{
+    <div>
+        @Html.LabelFor(model => model.Username)
+        @Html.EditorFor(model => model.Username)
+        @Html.ValidationMessageFor(model => model.Username)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.Password)
+        @Html.EditorFor(model => model.Password)
+        @Html.ValidationMessageFor(model => model.Password)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.Role)
+        @Html.EditorFor(model => model.Role)
+        @Html.ValidationMessageFor(model => model.Role)
+    </div>
+
+    <input type="submit" value="SignUp" />
+}
+@ViewData["message"]
