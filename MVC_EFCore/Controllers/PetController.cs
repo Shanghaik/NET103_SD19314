@@ -12,7 +12,7 @@ namespace MVC_EFCore.Controllers
         }
 
         // GET: PetController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int id) // Get-One Tempalte = Details, Model vẫn là Pet
         {
             return View();
         }
