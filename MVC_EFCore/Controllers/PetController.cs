@@ -1,14 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MVC_EFCore.Models;
 
 namespace MVC_EFCore.Controllers
 {
     public class PetController : Controller
     {
+        PETContext _context = new PETContext(); // Tạo luôn nếu sợ quên
         // GET: PetController
+        public PetController()
+        {
+            _context = new PETContext();
+        }
         public ActionResult Index() // Get-All Template = List, Context không chọn, Model = Pet
         {
-            return View();
+            var listItem = _context.Pets.ToList();
+            return View(listItem);
         }
 
         // GET: PetController/Details/5

@@ -1,83 +1,90 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MVC_EFCore.Models;
 
 namespace MVC_EFCore.Controllers
 {
     public class SenController : Controller
     {
         // GET: SenController
+        PETContext _context = new PETContext(); // Khai báo và khởi tạo context (tạo luôn ở đây nếu sợ quên)
+        public SenController()
+        {
+            _context = new PETContext();
+        }
         public ActionResult Index()
         {
-            return View();
+            var listItem = _context.Sens.ToList();
+            return View(listItem);
         }
 
         // GET: SenController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var item = _context.Sens.Find(id); // Phương thức Find(key) chỉ dùng với khóa chính
+            return View(item);
         }
 
         // GET: SenController/Create
-        public ActionResult Create()
+        public ActionResult Create() // Action này để trả về cái View (chưa có data) - hiển thị form điền
         {
-            return View();
+            // Tạo data Mẫu để truyền sang View
+            Sen sen = new Sen() { Ten = "Dữ liệu mẫu", Sdt = "12345", DiaChi= "Gầm cầu" };
+            return View(sen);
         }
 
         // POST: SenController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Sen sen)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _context.Sens.Add(sen); // Thêm đối tượng vào Db thông qua DbSet
+                _context.SaveChanges(); // Lưu lại thay đổi
+                return RedirectToAction("Index");   
             }
-            catch
+            catch(Exception e)
             {
-                return View();
+                return Content(e.Message);   
             }
         }
 
         // GET: SenController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int id) // Action để mở View
         {
-            return View();
+            var editItem = _context.Sens.Find(id); // Lấy để truyền data sang View
+            return View(editItem);
         }
 
         // POST: SenController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Sen sen)
         {
-            try
+            //var editItem = _context.Sens.Find(sen.Id); // Lấy để sửa
+            //editItem.Ten = sen.Ten;
+            //editItem.Sdt = sen.Sdt;
+            //editItem.DiaChi = sen.DiaChi;
+            try 
             {
-                return RedirectToAction(nameof(Index));
+                _context.Sens.Update(sen);
+                _context.SaveChanges();
+                return RedirectToAction("Index");   
             }
-            catch
+            catch(Exception e)
             {
-                return View();
+                return Content(e.Message);
             }
         }
 
         // GET: SenController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            // Muốn xóa phải tìm ra đối tượng cần xóa đã
+            var deleteItem = _context.Sens.Find(id);    
+            _context.Sens.Remove(deleteItem);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
-
-        // POST: SenController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+      
     }
 }
