@@ -60,13 +60,13 @@ namespace MVC_EFCore.Controllers
         [HttpPost]
         public ActionResult Edit(Sen sen)
         {
-            //var editItem = _context.Sens.Find(sen.Id); // Lấy để sửa
-            //editItem.Ten = sen.Ten;
-            //editItem.Sdt = sen.Sdt;
-            //editItem.DiaChi = sen.DiaChi;
+            var editItem = _context.Sens.Find(sen.Id); // Lấy để sửa
+            editItem.Ten = sen.Ten;
+            editItem.Sdt = sen.Sdt;
+            editItem.DiaChi = sen.DiaChi;
             try 
             {
-                _context.Sens.Update(sen);
+                _context.Sens.Update(editItem);
                 _context.SaveChanges();
                 return RedirectToAction("Index");   
             }

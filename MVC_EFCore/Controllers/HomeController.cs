@@ -15,6 +15,7 @@ namespace MVC_EFCore.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.message = HttpContext.Session.GetString("message");
             return View();
         }
 
