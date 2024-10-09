@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MVC_EFCore.Models;
+using Newtonsoft.Json;
 
 namespace MVC_EFCore.Controllers
 {
@@ -29,7 +30,7 @@ namespace MVC_EFCore.Controllers
         public ActionResult Create() // Action này để trả về cái View (chưa có data) - hiển thị form điền
         {
             // Tạo data Mẫu để truyền sang View
-            Sen sen = new Sen() { Ten = "Dữ liệu mẫu", Sdt = "12345", DiaChi= "Gầm cầu" };
+            Sen sen = new Sen() { Ten = "Dữ liệu mẫu", Sdt = "12345", DiaChi = "Gầm cầu" };
             return View(sen);
         }
 
@@ -41,11 +42,11 @@ namespace MVC_EFCore.Controllers
             {
                 _context.Sens.Add(sen); // Thêm đối tượng vào Db thông qua DbSet
                 _context.SaveChanges(); // Lưu lại thay đổi
-                return RedirectToAction("Index");   
+                return RedirectToAction("Index");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return Content(e.Message);   
+                return Content(e.Message);
             }
         }
 
@@ -64,13 +65,13 @@ namespace MVC_EFCore.Controllers
             editItem.Ten = sen.Ten;
             editItem.Sdt = sen.Sdt;
             editItem.DiaChi = sen.DiaChi;
-            try 
+            try
             {
                 _context.Sens.Update(editItem);
                 _context.SaveChanges();
-                return RedirectToAction("Index");   
+                return RedirectToAction("Index");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Content(e.Message);
             }
@@ -80,11 +81,38 @@ namespace MVC_EFCore.Controllers
         public ActionResult Delete(int id)
         {
             // Muốn xóa phải tìm ra đối tượng cần xóa đã
-            var deleteItem = _context.Sens.Find(id);    
+            var deleteItem = _context.Sens.Find(id);
+            // Thêm đối tượng vào trong Session
+            // Vì Session chỉ có thể setstring nên ta phải biến đối tượng về dạng string
+            string jsonData = JsonConvert.SerializeObject(deleteItem); // Mã hóa về sạng chuỗi Json
+            HttpContext.Session.SetString("deleted", jsonData);
             _context.Sens.Remove(deleteItem);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-      
+        public ActionResult RollBack() // Add lại vào db đối tượng vừa bị xóa
+        {
+            var sessionData = HttpContext.Session.GetString("deleted");
+            if (string.IsNullOrEmpty(sessionData))
+            {
+                return Content("Không tìm thấy data vừa bị xóa");
+            }
+            else
+            {
+                var deletedItem = JsonConvert.DeserializeObject<Sen>(sessionData);
+                Sen rollBackItem = new Sen()
+                {
+                    Ten = deletedItem.Ten,
+                    Sdt = deletedItem.Sdt,
+                    DiaChi = deletedItem.DiaChi
+                };
+                _context.Sens.Add(rollBackItem);
+                _context.SaveChanges();
+                HttpContext.Session.Remove("deleted"); // Xóa Session sau khi rollback
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        // Trong vòng 1 phút kể từ khi xóa, ta có thể rollBack lại. RollBack tất cả những đối tượng bị xóa
+
     }
 }
